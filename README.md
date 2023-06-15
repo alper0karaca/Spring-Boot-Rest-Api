@@ -1,8 +1,9 @@
 # Spring-Boot-Rest-Api
 Java Spring Boot Kullanarak Hazırlanmış demo  CRUD API Örneği 
 
-1 - VeriTabanı Bağlantısı ve Port Seçimi               
+1 - VeriTabanı Bağlantısı ve Port Seçimi      
 	-main/resources/application.properties
+
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/CrudExampleDB     #CrudExampleDB  Şema adımız oluyor
@@ -13,7 +14,9 @@ spring.jpa.hibernate.ddl-auto=update        #Okuma ve Yazma tam izin sabit
 server.port=8080   #Api için port 
 ```
 <br>
+
 2 - Entity Sınıfını oluşturmak
+
 
 ```
 package com.alperkaraca.CrudExample.entity;
@@ -60,6 +63,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 ```
 <br>
 4 - Service Katmanlarını Hazırlayalım 
+
 
 // buraya iş kodlarını yazıyoruz
 
@@ -116,7 +120,7 @@ public class CustomerServiceImpl implements CustomerService {
 ```
 <br> 
 
-5 - controller sınıfını yazalım ve endpointleri isimlendirelim 
+5 - Controller sınıfını yazalım ve endpointleri isimlendirelim 
 
 ```package com.alperkaraca.CrudExample.controller;
 
@@ -196,7 +200,11 @@ public class CustomerController {
 		
 		 customerService.deleteCustomer(id);
 	        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);	
-}}
+}} 
+```
+6- Postman ile test 
+
+
 
 
 
