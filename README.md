@@ -58,6 +58,146 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 }
 ```
+<br>
+4 - Service Katmanlarını Hazırlayalım 
+
+// buraya iş kodlarını yazıyoruz
+
+``` 
+package com.alperkaraca.CrudExample.service.concretes;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alperkaraca.CrudExample.dataAccess.CustomerRepository;
+import com.alperkaraca.CrudExample.entity.Customer;
+import com.alperkaraca.CrudExample.service.abstracts.CustomerService;
+
+@Service
+public class CustomerServiceImpl implements CustomerService {
+	
+	@Autowired
+	private CustomerRepository customerRepository;
+
+	
+	// müşteri ekleme
+	@Override
+	public Customer addCustomer(Customer customer) {
+		
+		return customerRepository.save(customer);
+	}
+
+	// tüm müşterileri getirme
+	@Override
+	public List<Customer> findAllCustomer() {
+		
+		
+		return customerRepository.findAll();
+	}
+
+	// id ile müşteri bulma
+	@Override
+	public Customer getCustomerById(Long customerid) {
+		
+		
+		return customerRepository.findById(customerid).get();
+	}
+
+	
+	// id ile müşteri silme
+	@Override
+	public void deleteCustomer(Long customerid) {
+	
+		customerRepository.deleteById(customerid);	
+	}
+} 
+```
+<br> 
+
+5 - controller sınıfını yazalım ve endpointleri isimlendirelim 
+
+```package com.alperkaraca.CrudExample.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alperkaraca.CrudExample.entity.Customer;
+import com.alperkaraca.CrudExample.exception.CustomerErrorResponse;
+import com.alperkaraca.CrudExample.exception.CustomerNotFoundException;
+import com.alperkaraca.CrudExample.service.abstracts.CustomerService;
+
+import lombok.Getter;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
+@RestController
+@RequestMapping("/api")
+public class CustomerController {
+	
+	@Autowired
+	private CustomerService customerService;
+	
+	
+	@PostMapping("/customers")
+	public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) {
+		
+		
+		Customer addCustomer = customerService.addCustomer(customer);
+		
+		return new ResponseEntity<Customer>(addCustomer,HttpStatus.CREATED) ;
+		
+	}
+	
+	@GetMapping("/customers")
+	public ResponseEntity<List<Customer>> getAllCustomer(){
+		
+		List<Customer> allCustomers = customerService.findAllCustomer();
+		
+		
+		return new ResponseEntity<List<Customer>>(allCustomers,HttpStatus.OK);
+		
+	}
+	
+	@GetMapping("/customers/{id}")
+	public ResponseEntity<Customer> getCustomerById(@PathVariable("id") Long id) {
+		
+		Customer customerById = customerService.getCustomerById(id);
+		
+		if (customerById==null) {
+			throw new CustomerNotFoundException("Customer Id Not Found :"+id);
+			
+		}
+		
+		return new ResponseEntity<Customer>(customerById,HttpStatus.OK) ;
+	}
+	
+	@DeleteMapping("/customers/{id}")
+	public ResponseEntity<Void> deleteCustomer(@PathVariable("id") Long id){
+		
+		Customer customerById = customerService.getCustomerById(id);
+		
+		if (customerById==null) {
+			throw new CustomerNotFoundException("Customer Id Not Found :"+id);
+			
+		}
+		
+		 customerService.deleteCustomer(id);
+	        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);	
+}}
+
 
 
 
