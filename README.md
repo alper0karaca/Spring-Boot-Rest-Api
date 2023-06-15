@@ -15,6 +15,7 @@ server.port=8080   #Api için port
 <br>
 2 - Entity Sınıfını oluşturmak
 
+```
 package com.alperkaraca.CrudExample.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,10 +44,12 @@ public class Customer {
 	
 	@Column(name = "last_name")
 	private String lastName;
-}
+} 
+```
 <br>
 3- Entity katmanlarının repostiorylerini hazırlayalım
 
+```
 package com.alperkaraca.CrudExample.dataAccess;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.alperkaraca.CrudExample.entity.Customer;
@@ -54,6 +57,7 @@ import com.alperkaraca.CrudExample.entity.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 }
+```
 
 
 
