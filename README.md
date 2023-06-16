@@ -18,7 +18,7 @@ server.port=8080   #Api için port
 2 - Entity Sınıfını oluşturmak
 
 
-```
+```java
 package com.alperkaraca.CrudExample.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,16 +30,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity 
-@Table(name = "customer")
-@Getter
+@Entity     // Bu classın db de maplenecegini soyleriz
+@Table(name = "customer")     //db tablo adı 
+@Getter         //her property için getter ve setter
 @Setter
-@ToString
+@ToString    // gerekli olabilir diye toString metodunuda ekledim
 public class Customer {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Id.    // //id olcak
+	@GeneratedValue(strategy = GenerationType.IDENTITY)   // db de otomatik artan sayı olduğunu bildirdik
+	@Column(name = "id")    // kolon adı
 	private Long id;
 	
 	@Column(name = "first_name")
@@ -52,7 +52,7 @@ public class Customer {
 <br>
 3- Entity katmanlarının repostiorylerini hazırlayalım
 
-```
+```java
 package com.alperkaraca.CrudExample.dataAccess;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.alperkaraca.CrudExample.entity.Customer;
@@ -60,6 +60,16 @@ import com.alperkaraca.CrudExample.entity.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 }
+
+/*
+Jpa Tarafından bize sql tarafı için birçok hazır yapı gelmekte
+mesela..; select yapıları = find... şeklinde
+
+findUserByName() şeklinde bir fonk oluşturursanız da jpa bunu sizin için doldurcaktır 
+ve isme gore arama yapabilceksiniz artık
+*/
+
+
 ```
 <br>
 4 - Service Katmanlarını Hazırlayalım 
@@ -67,7 +77,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
 // buraya iş kodlarını yazıyoruz
 
-``` 
+```java 
 package com.alperkaraca.CrudExample.service.concretes;
 
 import java.util.List;
@@ -79,21 +89,21 @@ import com.alperkaraca.CrudExample.dataAccess.CustomerRepository;
 import com.alperkaraca.CrudExample.entity.Customer;
 import com.alperkaraca.CrudExample.service.abstracts.CustomerService;
 
-@Service
+@Service   ////Her classın aşagı yukarı farklı gorevi oldugu için bu tur anatosyanları unutmanız durumunda hatalar alabilirsiniz.
 public class CustomerServiceImpl implements CustomerService {
 	
-	@Autowired
+	@Autowired // Constructor kullanmaya gerek kalmadan deger ataması sagladık
 	private CustomerRepository customerRepository;
 
 	
-	// müşteri ekleme
+	// müşteri ekleme fonksiyonu
 	@Override
 	public Customer addCustomer(Customer customer) {
 		
 		return customerRepository.save(customer);
 	}
 
-	// tüm müşterileri getirme
+	// tüm müşterileri getirme fonk
 	@Override
 	public List<Customer> findAllCustomer() {
 		
@@ -102,6 +112,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	// id ile müşteri bulma
+	
+	//secilen id li kullancıyı return etcek
+	//bulamadıgı durumlarda oluşturdugumz exception classına takılıp hatayı return edecektir
 	@Override
 	public Customer getCustomerById(Long customerid) {
 		
@@ -122,7 +135,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 5 - Controller sınıfını yazalım ve endpointleri isimlendirelim 
 
-```package com.alperkaraca.CrudExample.controller;
+```java
+package com.alperkaraca.CrudExample.controller;
 
 import java.util.List;
 
@@ -148,7 +162,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api")   // 
 public class CustomerController {
 	
 	@Autowired
@@ -202,10 +216,61 @@ public class CustomerController {
 	        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);	
 }} 
 ```
-6- Postman ile test 
+## 6- Postman ile test 
+GET: localhost:8080/api/customers
+```json
+//RESPONSE
+{
+        "id": 1,
+        "firstName": "David",
+        "lastName": "Adams"
+    },
+    {
+        "id": 2,
+        "firstName": "John",
+        "lastName": "Doe"
+    }
+  ```
 
+GET: localhost:8080/api/customers/5
+```json
+//RESPONSE
 
+{
+    "id": 5,
+    "firstName": "Maxwell",
+    "lastName": "Dixon"
+}
+```
 
+POST: localhost:8080/api/customers
+```json
+//REQUEST
+{                                
+"fullName":"Alper Karaca",        
+"email":"admin@admin.com",        
+"password":"admin"                
+}
+// RESPONSE
+{
+"id" : 2,
+"fullName" : "Alper Karaca",
+"email" : "admin@admin.com",
+"password":"admin"
+}
+``` 
+DELETE: localhost:8080/api/customers/5
+```json
+//RESPONSE
+
+```java
+// bu fonksiyonda silme işlemi gerçekleştiğinde herhangi birşey döndürmedim 
+//ama silme işleminde aşğıdaki gibi true şeklinde json tipinde bir veri döndürülebilir 
+
+{
+"success": true
+}
+```
 
 
 
