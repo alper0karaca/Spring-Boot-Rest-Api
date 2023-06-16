@@ -162,7 +162,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("/api")   // 
+@RequestMapping("/api")   // Ana yol 
 public class CustomerController {
 	
 	@Autowired
